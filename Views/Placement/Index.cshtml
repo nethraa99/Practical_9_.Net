@@ -1,0 +1,228 @@
+﻿@model Practical_8_.Net.Models.PlacementDashboardViewModel
+
+@{
+    ViewBag.Title = "Placement Dashboard";
+}
+
+<style>
+    .dashboard-header {
+        margin-bottom: 25px;
+    }
+
+        .dashboard-header h2 {
+            margin: 0 0 6px 0;
+            font-size: 24px;
+            font-weight: 700;
+            color: #0f172a;
+        }
+
+        .dashboard-header p {
+            margin: 0;
+            color: #64748b;
+            font-size: 14px;
+        }
+
+    /* KPI Summary Grid */
+    .kpi-container {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(145px, 1fr));
+        gap: 14px;
+        margin-bottom: 28px;
+    }
+
+    .kpi-card {
+        background: #f8fafc;
+        border: 1px solid #e2e8f0;
+        border-radius: 10px;
+        padding: 16px 12px;
+        text-align: center;
+        transition: transform 0.15s ease, box-shadow 0.15s ease;
+    }
+
+        .kpi-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+        }
+
+    .kpi-title {
+        font-size: 11px;
+        color: #64748b;
+        text-transform: uppercase;
+        font-weight: 600;
+        letter-spacing: 0.06em;
+    }
+
+    .kpi-number {
+        font-size: 22px;
+        font-weight: 700;
+        margin-top: 6px;
+        color: #0f172a;
+    }
+
+    /* Filter Nav Tabs */
+    .filter-tabs {
+        display: flex;
+        gap: 8px;
+        margin-bottom: 18px;
+    }
+
+    .filter-btn {
+        padding: 7px 16px;
+        border-radius: 6px;
+        text-decoration: none;
+        font-size: 13px;
+        font-weight: 500;
+        border: 1px solid #cbd5e1;
+        color: #475569;
+        background-color: #ffffff;
+        transition: all 0.2s ease;
+    }
+
+        .filter-btn:hover {
+            background-color: #f1f5f9;
+            color: #1e293b;
+        }
+
+        .filter-btn.active {
+            background-color: #2563eb;
+            color: #ffffff;
+            border-color: #2563eb;
+        }
+
+    /* Data Table */
+    .styled-table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 14px;
+    }
+
+        .styled-table th {
+            background-color: #f8fafc;
+            color: #475569;
+            font-weight: 600;
+            text-transform: uppercase;
+            font-size: 12px;
+            letter-spacing: 0.05em;
+            padding: 12px 14px;
+            border-bottom: 2px solid #e2e8f0;
+            text-align: left;
+        }
+
+        .styled-table td {
+            padding: 12px 14px;
+            border-bottom: 1px solid #e2e8f0;
+            vertical-align: middle;
+        }
+
+        .styled-table tbody tr:hover {
+            background-color: #f8fafc;
+        }
+
+    /* Badges */
+    .badge-placed {
+        display: inline-block;
+        background-color: #dcfce7;
+        color: #15803d;
+        padding: 3px 8px;
+        border-radius: 4px;
+        font-size: 12px;
+        font-weight: 600;
+    }
+
+    .badge-unplaced {
+        display: inline-block;
+        background-color: #fee2e2;
+        color: #b91c1c;
+        padding: 3px 8px;
+        border-radius: 4px;
+        font-size: 12px;
+        font-weight: 600;
+    }
+</style>
+
+<div class="dashboard-header">
+    <h2>Placement Analytics Dashboard</h2>
+    <p>Batch of 2026 &bull; Computer Engineering Department</p>
+</div>
+
+<!-- KPI Cards -->
+<div class="kpi-container">
+    <div class="kpi-card">
+        <div class="kpi-title">Total Students</div>
+        <div class="kpi-number">@Model.Summary.TotalStudents</div>
+    </div>
+    <div class="kpi-card">
+        <div class="kpi-title">Placed</div>
+        <div class="kpi-number" style="color: #16a34a;">@Model.Summary.TotalPlaced</div>
+    </div>
+    <div class="kpi-card">
+        <div class="kpi-title">Unplaced</div>
+        <div class="kpi-number" style="color: #dc2626;">@Model.Summary.TotalUnplaced</div>
+    </div>
+    <div class="kpi-card">
+        <div class="kpi-title">Placement Rate</div>
+        <div class="kpi-number" style="color: #2563eb;">@Model.Summary.PlacementPercentage%</div>
+    </div>
+    <div class="kpi-card">
+        <div class="kpi-title">Highest Package</div>
+        <div class="kpi-number" style="color: #d97706;">₹@Model.Summary.HighestPackage LPA</div>
+    </div>
+    <div class="kpi-card">
+        <div class="kpi-title">Average Package</div>
+        <div class="kpi-number" style="color: #0891b2;">₹@Model.Summary.AveragePackage LPA</div>
+    </div>
+</div>
+
+<!-- Filter Tabs -->
+<div class="filter-tabs">
+    @Html.ActionLink("All Students", "Index", new { filter = "All" }, new { @class = "filter-btn " + (Model.CurrentFilter == "All" ? "active" : "") })
+    @Html.ActionLink("Placed Students", "Index", new { filter = "Placed" }, new { @class = "filter-btn " + (Model.CurrentFilter == "Placed" ? "active" : "") })
+    @Html.ActionLink("Unplaced Students", "Index", new { filter = "Unplaced" }, new { @class = "filter-btn " + (Model.CurrentFilter == "Unplaced" ? "active" : "") })
+</div>
+
+<!-- Data Table -->
+<table class="styled-table">
+    <thead>
+        <tr>
+            <th>Enrollment</th>
+            <th>Student Name</th>
+            <th>Department</th>
+            <th>Status</th>
+            <th>Company</th>
+            <th>Job Role</th>
+            <th style="text-align: right;">Package</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var s in Model.StudentsList)
+        {
+            <tr>
+                <td style="font-weight: 600; color: #1e293b;">@s.EnrollmentNo</td>
+                <td>@s.StudentName</td>
+                <td>@s.Department</td>
+                <td>
+                    @if (s.IsPlaced)
+                    {
+                        <span class="badge-placed">Placed</span>
+                    }
+                    else
+                    {
+                        <span class="badge-unplaced">Unplaced</span>
+                    }
+                </td>
+                <td>@(s.IsPlaced ? s.CompanyName : "-")</td>
+                <td>@(s.IsPlaced ? s.JobRole : "-")</td>
+                <td style="text-align: right;">
+                    @if (s.PackageLPA.HasValue)
+                    {
+                        <strong style="color: #16a34a;">₹@s.PackageLPA.Value.ToString("0.00") LPA</strong>
+                    }
+                    else
+                    {
+                        <span style="color: #94a3b8;">-</span>
+                    }
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
